@@ -10,6 +10,8 @@ import (
 	"github.com/jhunt/bsh/table"
 )
 
+var Version string
+
 const (
 	OopsBadOptions int = iota
 	OopsNotImplemented
@@ -80,6 +82,19 @@ func main() {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsBadOptions)
+	}
+
+	if command == "" && len(args) > 0 && args[0] == "version" {
+		opt.Version = true
+	}
+
+	if opt.Version {
+		if Version == "" {
+			fmt.Printf("bsh @*{development version} ... @C{¯\\_(ツ)_/¯}\n")
+		} else {
+			fmt.Printf("bsh %s\n", Version)
+		}
+		os.Exit(0)
 	}
 
 	if command == "" {
