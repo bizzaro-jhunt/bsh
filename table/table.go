@@ -11,6 +11,7 @@ type Table struct {
 	Headers []string
 	Widths  []int
 	Rows    [][]string
+	Prefix  string
 }
 
 func NewTable(headers ...string) Table {
@@ -39,6 +40,7 @@ func (t *Table) Row(data ...interface{}) {
 }
 
 func (t Table) Print(out io.Writer) {
+	fmt.Fprintf(out, t.Prefix)
 	for i := range t.Headers {
 		if i != 0 {
 			fmt.Fprintf(out, "  ")
@@ -47,6 +49,7 @@ func (t Table) Print(out io.Writer) {
 	}
 	fmt.Fprintf(out, "\n")
 
+	fmt.Fprintf(out, t.Prefix)
 	for i := range t.Widths {
 		if i != 0 {
 			fmt.Fprintf(out, "  ")
@@ -56,6 +59,7 @@ func (t Table) Print(out io.Writer) {
 	fmt.Fprintf(out, "\n")
 
 	for i := range t.Rows {
+		fmt.Fprintf(out, t.Prefix)
 		for j := range t.Rows[i] {
 			if j != 0 {
 				fmt.Fprintf(out, "  ")

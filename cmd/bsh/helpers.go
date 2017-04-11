@@ -31,3 +31,10 @@ func tstamp(ts int) string {
 	t := time.Unix(int64(ts), 0)
 	return t.Format("2006-01-02 15:04:05-0700 MST")
 }
+
+func or(iff, els string) string {
+	if iff != "" {
+		return iff
+	}
+	return els
+}

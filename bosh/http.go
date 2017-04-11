@@ -1,6 +1,7 @@
 package bosh
 
 import (
+	"bufio"
 	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
@@ -9,6 +10,11 @@ import (
 
 func (t Target) UA() *http.Client {
 	return &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			req.URL.Host = via[0].URL.Host
+			req.Header.Set("Authorization", via[0].Header.Get("Authorization"))
+			return nil
+		},
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
@@ -40,7 +46,12 @@ func (t Target) InterpretJSON(res *http.Response, v interface{}) error {
 	return nil
 }
 
-func (t Target) InterpretJSONList(res *http.Response) ([]string, error) {
-	/* FIXME get a line reader, and parse stuff into a list of JSON-ish strings */
-	return nil, nil
+func (t Target) InterpretJSONList(res *http.Response) ([][]byte, error) {
+	l := make([][]byte, 0)
+
+	sc := bufio.NewScanner(res.Body)
+	for sc.Scan() {
+		l = append(l, sc.Bytes())
+	}
+	return l, sc.Err()
 }

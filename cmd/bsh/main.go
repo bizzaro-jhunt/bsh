@@ -53,6 +53,7 @@ type Opt struct {
 
 	VMs struct {
 		Vitals bool `cli:"-V, --vitals"`
+		Deployment string   `cli:"-d, --deployment"`
 	} `cli:"vms"`
 
 	Targets struct {
@@ -88,11 +89,11 @@ func main() {
 	case "tasks":
 		_, t := targeting(opt.Config)
 		tasks, err := t.GetTasks(bosh.TasksFilter{
-			States: opt.Tasks.States,
+			States:     opt.Tasks.States,
 			Deployment: opt.Tasks.Deployment,
-			ContextID: opt.Tasks.ContextID,
-			Limit: opt.Tasks.Limit,
-			Verbose: 2,
+			ContextID:  opt.Tasks.ContextID,
+			Limit:      opt.Tasks.Limit,
+			Verbose:    2,
 		})
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
@@ -188,24 +189,51 @@ func main() {
 		fmt.Printf("  %-10s @Y{%s}\n", "CPI", info.CPI)
 		os.Exit(0)
 
-		/*
-			case "vms":
-				cfg, t := targeting(opt.Config)
+	case "vms":
+		_, t := targeting(opt.Config)
+		var deployments []string
 
-				c := bosh.NewClient()
-				vms, err := c.GetVMs(*t)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
-					os.Exit(OopsCommunicationFailed)
-				}
+		if len(args) > 0 {
+			deployments = append(deployments, args...)
+		} else if opt.VMs.Deployment != "" {
+			deployments = append(deployments, opt.VMs.Deployment)
+		}
+		if len(deployments) == 0 {
+			deploys, err := t.GetDeployments()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+				os.Exit(OopsCommunicationFailed)
+			}
+			for _, d := range deploys {
+				deployments = append(deployments, d.Name)
+			}
+		}
 
-				tbl := table.NewTable("Name", "State", "AZ", "Type", "IPs")
-				for _, vm := range vms {
-					tbl.Row("", "", "", "")
+		for n, deployment := range deployments {
+			vms, err := t.GetVMsFor(deployment)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+				os.Exit(OopsCommunicationFailed)
+			}
+
+			tbl := table.NewTable("Name", "State", "AZ", "Type", "IPs")
+			tbl.Prefix = "   "
+			for _, vm := range vms {
+				for i := range vm.IPs {
+					if i == 0 {
+						tbl.Row(vm.FullName(), vm.JobState, or(vm.AZ, "-"), vm.Type, vm.IPs[i])
+					} else {
+						tbl.Row("", "", "", "", vm.IPs[i])
+					}
 				}
-				tbl.Print(os.Stdout)
-				os.Exit(0)
-		*/
+			}
+			if n != 0 {
+				fmt.Printf("\n\n\n")
+			}
+			fmt.Printf("@G{%s} vms:\n\n", deployment)
+			tbl.Print(os.Stdout)
+		}
+		os.Exit(0)
 
 	case "targets":
 		cfg := readConfigFrom(opt.Config)

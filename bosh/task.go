@@ -2,12 +2,12 @@ package bosh
 
 import (
 	"fmt"
-	"time"
 	"io/ioutil"
+	"time"
 )
 
 type Task struct {
-	ID          int `json:"id"`
+	ID          int     `json:"id"`
 	State       string  `json:"state"`
 	Description string  `json:"description"`
 	StartedAt   int     `json:"started_at"` // undocumented
@@ -20,11 +20,14 @@ type Task struct {
 
 func (t Target) GetTask(id int) (Task, error) {
 	var task Task
-	r, err := t.Get(fmt.Sprintf("/tasks/%i", id))
+	r, err := t.Get(fmt.Sprintf("/tasks/%d", id))
 	if err != nil {
 		return task, err
 	}
 
+	if r.StatusCode == 204 {
+		return task, nil
+	}
 	if r.StatusCode != 200 {
 		return task, fmt.Errorf("BOSH API returned %s", r.Status)
 	}
@@ -50,14 +53,10 @@ func (t Target) WaitTask(id int, sleep time.Duration) (Task, error) {
 	}
 }
 
-func (t Target) GetTaskDebugOutput(task Task) (string, error) {
-	r, err := t.Get(fmt.Sprintf("/tasks/%s/output?type=debug"))
+func (t Target) getTaskOutput(task Task, what string) (string, error) {
+	r, err := t.Get(fmt.Sprintf("/tasks/%d/output?type=%s", task.ID, what))
 	if err != nil {
 		return "", err
-	}
-
-	if r.StatusCode != 200 {
-		return "", fmt.Errorf("BOSH API returned %s", r.Status)
 	}
 
 	b, err := ioutil.ReadAll(r.Body)
@@ -66,4 +65,12 @@ func (t Target) GetTaskDebugOutput(task Task) (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func (t Target) GetTaskDebugOutput(task Task) (string, error) {
+	return t.getTaskOutput(task, "debug")
+}
+
+func (t Target) GetTaskResult(task Task) (string, error) {
+	return t.getTaskOutput(task, "result")
 }
