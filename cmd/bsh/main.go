@@ -16,6 +16,7 @@ const (
 	OopsBadConfiguration
 	OopsCommunicationFailed
 	OopsSaveConfigFailed
+	OopsJSONFailed
 )
 
 type Opt struct {
@@ -31,6 +32,8 @@ type Opt struct {
 	Config     string `cli:"-c, --config"`
 	BOSHTarget string `cli:"-t, --target"`
 
+	AsJSON bool `cli:"--json"`
+
 	Task struct {
 	} `cli:"task"`
 
@@ -42,7 +45,6 @@ type Opt struct {
 	} `cli:"tasks"`
 
 	Deployments struct {
-		Short bool `cli:"-s, --short"`
 	} `cli:"deployments"`
 
 	Login struct {
@@ -52,8 +54,8 @@ type Opt struct {
 	} `cli:"status"`
 
 	VMs struct {
-		Vitals bool `cli:"-V, --vitals"`
-		Deployment string   `cli:"-d, --deployment"`
+		Vitals     bool   `cli:"-V, --vitals"`
+		Deployment string `cli:"-d, --deployment"`
 	} `cli:"vms"`
 
 	Targets struct {
@@ -119,6 +121,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 			os.Exit(OopsCommunicationFailed)
+		}
+
+		if opt.AsJSON {
+			jsonify(deployments)
+			os.Exit(0)
 		}
 
 		tbl := table.NewTable("Name", "Release(s)", "Stemcell(s)", "Cloud-Config")
@@ -209,6 +216,20 @@ func main() {
 			}
 		}
 
+		if opt.AsJSON {
+			m := make(map[string][]bosh.VM)
+			for _, deployment := range deployments {
+				vms, err := t.GetVMsFor(deployment)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+					os.Exit(OopsCommunicationFailed)
+				}
+				m[deployment] = vms
+			}
+			jsonify(m)
+			os.Exit(0)
+		}
+
 		for n, deployment := range deployments {
 			vms, err := t.GetVMsFor(deployment)
 			if err != nil {
@@ -216,14 +237,15 @@ func main() {
 				os.Exit(OopsCommunicationFailed)
 			}
 
-			tbl := table.NewTable("Name", "State", "AZ", "Type", "IPs")
+			tbl := table.NewTable("Name", "State", "UUID", "AZ", "Type", "IPs")
 			tbl.Prefix = "   "
 			for _, vm := range vms {
 				for i := range vm.IPs {
 					if i == 0 {
-						tbl.Row(vm.FullName(), vm.JobState, or(vm.AZ, "-"), vm.Type, vm.IPs[i])
+						tbl.Row(vm.FullName(), vm.JobState, vm.CID, or(vm.AZ, "-"), vm.Type, vm.IPs[i])
 					} else {
-						tbl.Row("", "", "", "", vm.IPs[i])
+
+						tbl.Row("", "", "", "", "", vm.IPs[i])
 					}
 				}
 			}

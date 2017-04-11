@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	fmt "github.com/jhunt/go-ansi"
 	"os"
 	"time"
@@ -37,4 +38,13 @@ func or(iff, els string) string {
 		return iff
 	}
 	return els
+}
+
+func jsonify(x interface{}) {
+	b, err := json.Marshal(x)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+		os.Exit(OopsJSONFailed)
+	}
+	fmt.Printf("%s\n", string(b))
 }

@@ -13,7 +13,7 @@ type Process struct {
 
 type VM struct {
 	AgentID            string   `json:"agent_id"`
-	VMCID              string   `json:"vm_cid"`
+	CID                string   `json:"vm_cid"`
 	ResourcePool       string   `json:"resource_pool"`
 	DiskCID            string   `json:"disk_cid"`
 	JobName            string   `json:"job_name"`
