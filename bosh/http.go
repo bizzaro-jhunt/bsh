@@ -48,6 +48,16 @@ func (t Target) Post(url string, payload interface{}) (*http.Response, error) {
 	return t.UA().Do(req)
 }
 
+func (t Target) PostYAML(url string, raw []byte) (*http.Response, error) {
+	req, err := http.NewRequest("POST", t.URL+url, strings.NewReader(string(raw)))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-type", "text/yaml")
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	return t.UA().Do(req)
+}
+
 func (t Target) InterpretJSON(res *http.Response, v interface{}) error {
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {

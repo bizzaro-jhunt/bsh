@@ -23,6 +23,10 @@ func (t Task) Completed() bool {
 	return !(t.State == "queued" || t.State == "processing" || t.State == "cancelling")
 }
 
+func (t Task) Succeeded() bool {
+	return t.State == "done"
+}
+
 func (t Target) GetTask(id int) (Task, error) {
 	var task Task
 	r, err := t.Get(fmt.Sprintf("/tasks/%d", id))

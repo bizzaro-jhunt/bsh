@@ -19,6 +19,7 @@ const (
 	OopsSaveConfigFailed
 	OopsJSONFailed
 	OopsTaskFailed
+	OopsCancelled
 )
 
 type Opt struct {
@@ -35,6 +36,18 @@ type Opt struct {
 	BOSHTarget string `cli:"-t, --target"`
 
 	AsJSON bool `cli:"--json"`
+	Batch  bool `cli:"-y, --yes"`
+
+	Deploy struct {
+		Deployment string `cli:"-d, --deployment"`
+		Recreate   bool   `cli:"-R, --recreate"`
+		Redact     bool   `cli:"--redact"`
+	} `cli:"deploy"`
+
+	Diff struct {
+		Deployment string `cli:"-d, --deployment"`
+		Redact     bool   `cli:"--redact"`
+	} `cli:"diff"`
 
 	Task struct {
 	} `cli:"task"`
@@ -115,6 +128,8 @@ func main() {
 
 	known := map[string]func(Opt, string, []string){
 		"cleanup":     runCleanup,
+		"deploy":      runDeploy,
+		"diff":        runDiff,
 		"deployments": runDeployments,
 		"login":       runLogin,
 		"releases":    runReleases,

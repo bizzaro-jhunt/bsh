@@ -24,3 +24,13 @@ func prompt(label string, hide bool) string {
 	s, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 	return strings.TrimSuffix(s, "\n")
 }
+
+func confirm(label string) bool {
+	s := prompt(label, false)
+	switch strings.ToLower(s) {
+	case "yes", "y", "yup", "sure", "yeah", "yea":
+		return true
+	default:
+		return false
+	}
+}
