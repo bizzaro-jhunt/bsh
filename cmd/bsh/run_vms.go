@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	fmt "github.com/jhunt/go-ansi"
 	"os"
 
 	"github.com/jhunt/bsh/bosh"
