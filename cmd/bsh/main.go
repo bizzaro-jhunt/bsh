@@ -55,6 +55,13 @@ type Opt struct {
 	Deployments struct {
 	} `cli:"deployments"`
 
+	Releases struct {
+		Jobs bool `cli:"--jobs"`
+	} `cli:"releases"`
+
+	Stemcells struct {
+	} `cli:"stemcells"`
+
 	Login struct {
 	} `cli:"login"`
 
@@ -169,6 +176,88 @@ func main() {
 			os.Exit(OopsTaskFailed)
 		}
 		fmt.Printf("@G{cleanup complete.}\n")
+		os.Exit(0)
+
+	case "releases":
+		_, t := targeting(opt.Config)
+		releases, err := t.GetReleases()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsCommunicationFailed)
+		}
+
+		if opt.AsJSON {
+			jsonify(releases)
+			os.Exit(0)
+		}
+
+		var tbl table.Table
+		if opt.Releases.Jobs {
+			tbl = table.NewTable("Name", "Version(s)", "Commit SHA1", "Jobs")
+		} else {
+			tbl = table.NewTable("Name", "Version(s)", "Commit SHA1")
+		}
+		for _, rel := range releases {
+			for i := range rel.Versions {
+				name := rel.Name
+				deployed := " "
+				if rel.Versions[i].Deployed {
+					deployed = "*"
+				}
+				dirty := " "
+				if rel.Versions[i].Dirty {
+					dirty = "+"
+				}
+
+				if opt.Releases.Jobs {
+					for j, job := range rel.Versions[i].Jobs {
+						if j == 0 {
+							tbl.Row(name,
+								fmt.Sprintf("%s%s", rel.Versions[i].Version, deployed),
+								fmt.Sprintf("%s%s", rel.Versions[i].Commit, dirty),
+								job)
+						} else {
+							tbl.Row("", "", "", job)
+						}
+					}
+					tbl.Row("", "", "")
+				} else {
+					if i != 0 {
+						name = ""
+					}
+					tbl.Row(name,
+						fmt.Sprintf("%s%s", rel.Versions[i].Version, deployed),
+						fmt.Sprintf("%s%s", rel.Versions[i].Commit, dirty))
+				}
+			}
+			tbl.Row("", "", "")
+		}
+		tbl.Print(os.Stdout)
+		os.Exit(0)
+
+	case "stemcells":
+		_, t := targeting(opt.Config)
+		stemcells, err := t.GetStemcells()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsCommunicationFailed)
+		}
+
+		if opt.AsJSON {
+			jsonify(stemcells)
+			os.Exit(0)
+		}
+
+		tbl := table.NewTable("Name", "Version(s)", "OS", "CID")
+		for _, stem := range stemcells {
+			deployed := " "
+			if len(stem.Deployments) > 0 {
+				deployed = "*"
+			}
+			tbl.Row(stem.Name, stem.OS,
+				fmt.Sprintf("%s%s", stem.Version, deployed), stem.CID)
+		}
+		tbl.Print(os.Stdout)
 		os.Exit(0)
 
 	case "deployments":
