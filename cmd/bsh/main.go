@@ -104,6 +104,10 @@ type Opt struct {
 		Release struct {
 			Force bool `cli:"-f, --force"`
 		} `cli:"release"`
+
+		Stemcell struct {
+			Force bool `cli:"-f, --force"`
+		} `cli:"stemcell"`
 	} `cli:"delete"`
 }
 
@@ -160,7 +164,8 @@ func main() {
 		"tasks":       runTasks,
 		"vms":         runVMs,
 
-		"delete release": runDeleteRelease,
+		"delete release":  runDeleteRelease,
+		"delete stemcell": runDeleteStemcell,
 	}
 
 	if fn, ok := known[command]; ok {
