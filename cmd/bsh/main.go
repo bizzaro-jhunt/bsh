@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	fmt "github.com/jhunt/go-ansi"
 	cli "github.com/jhunt/go-cli"
@@ -19,6 +20,7 @@ const (
 	OopsCommunicationFailed
 	OopsSaveConfigFailed
 	OopsJSONFailed
+	OopsTaskFailed
 )
 
 type Opt struct {
@@ -45,6 +47,10 @@ type Opt struct {
 		ContextID  string   `cli:"-C, --context, --context-id"`
 		Limit      int      `cli:"-l, --limit"`
 	} `cli:"tasks"`
+
+	Cleanup struct {
+		All bool `cli:"-a, --all"`
+	} `cli:"cleanup"`
 
 	Deployments struct {
 	} `cli:"deployments"`
@@ -103,6 +109,25 @@ func main() {
 	}
 
 	switch command {
+	case "task":
+		_, t := targeting(opt.Config)
+		if len(args) != 1 {
+			fmt.Fprintf(os.Stderr, "@R{usage...}\n")
+			os.Exit(OopsBadOptions)
+		}
+		id, err := strconv.ParseUint(args[0], 10, 0)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsBadOptions)
+		}
+		task, err := t.GetTask(int(id))
+		err = t.Follow(os.Stdout, task.ID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsTaskFailed)
+		}
+		os.Exit(0)
+
 	case "tasks":
 		_, t := targeting(opt.Config)
 		tasks, err := t.GetTasks(bosh.TasksFilter{
@@ -128,6 +153,22 @@ func main() {
 				task.User, task.Deployment, task.Description, result)
 		}
 		tbl.Print(os.Stdout)
+		os.Exit(0)
+
+	case "cleanup":
+		_, t := targeting(opt.Config)
+		task, err := t.Cleanup(opt.Cleanup.All)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsCommunicationFailed)
+		}
+
+		err = t.Follow(os.Stdout, task.ID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsTaskFailed)
+		}
+		fmt.Printf("@G{cleanup complete.}\n")
 		os.Exit(0)
 
 	case "deployments":

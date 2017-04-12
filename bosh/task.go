@@ -2,6 +2,7 @@ package bosh
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"time"
 )
@@ -16,6 +17,10 @@ type Task struct {
 	User        string  `json:"user"`
 	ContextID   *string `json:"context_id"`
 	Deployment  string  `json:"deployment"` // undocumented
+}
+
+func (t Task) Completed() bool {
+	return !(t.State == "queued" || t.State == "processing" || t.State == "cancelling")
 }
 
 func (t Target) GetTask(id int) (Task, error) {
@@ -51,6 +56,57 @@ func (t Target) WaitTask(id int, sleep time.Duration) (Task, error) {
 
 		time.Sleep(sleep)
 	}
+}
+
+func (t Target) Follow(out io.Writer, id int) error {
+	fmt.Fprintf(out, "bosh task %d:\n", id)
+
+	poller := make(chan error)
+	tracer := make(chan error)
+	rd, wr := io.Pipe()
+	go func() {
+		offset := 0
+		for {
+			/* strategy: keep poking BOSH until the task is no longer running */
+			task, err := t.GetTask(id)
+			if err != nil {
+				poller <- err
+				return
+			}
+
+			/* go get our output */
+			output, err := t.getTaskOutput(task, "event")
+			if err != nil {
+				poller <- err
+				return
+			}
+
+			if len(output) > offset {
+				wr.Write([]byte(output[offset:]))
+				offset = len(output)
+			}
+
+			if task.Completed() {
+				poller <- nil
+				return
+			}
+
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		tracer <- TraceEvents(out, rd)
+	}()
+
+	err := <-poller
+	wr.Close()
+	if err != nil {
+		<-tracer
+		return err
+	}
+
+	return <-tracer
 }
 
 func (t Target) getTaskOutput(task Task, what string) (string, error) {

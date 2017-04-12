@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func (t Target) UA() *http.Client {
@@ -29,7 +30,21 @@ func (t Target) Get(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	return t.UA().Do(req)
+}
+
+func (t Target) Post(url string, payload interface{}) (*http.Response, error) {
+	b, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", t.URL+url, strings.NewReader(string(b)))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
 	return t.UA().Do(req)
 }
 
