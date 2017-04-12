@@ -70,6 +70,9 @@ type Opt struct {
 	Curl struct {
 	} `cli:"curl"`
 
+	Locks struct {
+	} `cli:"locks"`
+
 	Deployments struct {
 	} `cli:"deployments"`
 
@@ -140,6 +143,7 @@ func main() {
 		"deploy":      runDeploy,
 		"deployments": runDeployments,
 		"diff":        runDiff,
+		"locks":       runLocks,
 		"login":       runLogin,
 		"releases":    runReleases,
 		"status":      runStatus,
