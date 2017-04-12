@@ -52,6 +52,10 @@ type Opt struct {
 	Task struct {
 	} `cli:"task"`
 
+	Check struct {
+		Deployment string `cli:"-d, --deployment"`
+	} `cli:"check"`
+
 	Tasks struct {
 		States     []string `cli:"-s, --state"`
 		Deployment string   `cli:"-d, --deployment"`
@@ -62,6 +66,9 @@ type Opt struct {
 	Cleanup struct {
 		All bool `cli:"-a, --all"`
 	} `cli:"cleanup"`
+
+	Curl struct {
+	} `cli:"curl"`
 
 	Deployments struct {
 	} `cli:"deployments"`
@@ -127,10 +134,12 @@ func main() {
 	}
 
 	known := map[string]func(Opt, string, []string){
+		"check":       runCheck,
 		"cleanup":     runCleanup,
+		"curl":        runCurl,
 		"deploy":      runDeploy,
-		"diff":        runDiff,
 		"deployments": runDeployments,
+		"diff":        runDiff,
 		"login":       runLogin,
 		"releases":    runReleases,
 		"status":      runStatus,
