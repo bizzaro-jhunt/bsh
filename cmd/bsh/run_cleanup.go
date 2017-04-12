@@ -12,5 +12,5 @@ func runCleanup(opt Opt, command string, args []string) {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsCommunicationFailed)
 	}
-	follow(t, task.ID, okfail("cleanup"))
+	follow(t, task.ID, okfail("cleanup"), true)
 }

@@ -50,6 +50,11 @@ type Opt struct {
 	} `cli:"diff"`
 
 	Task struct {
+		Event  bool `cli:"--event"`
+		Debug  bool `cli:"--debug"`
+		Result bool `cli:"--result"`
+		Raw    bool `cli:"--raw"`
+		CPI    bool `cli:"--cpi"`
 	} `cli:"task"`
 
 	Check struct {

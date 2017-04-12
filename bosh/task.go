@@ -77,7 +77,7 @@ func (t Target) Follow(out io.Writer, id int) error {
 			}
 
 			/* go get our output */
-			output, err := t.getTaskOutput(task, "event")
+			output, err := t.GetTaskOutput(task, "event")
 			if err != nil {
 				poller <- err
 				return
@@ -111,7 +111,7 @@ func (t Target) Follow(out io.Writer, id int) error {
 	return <-tracer
 }
 
-func (t Target) getTaskOutput(task Task, what string) (string, error) {
+func (t Target) GetTaskOutput(task Task, what string) (string, error) {
 	r, err := t.Get(fmt.Sprintf("/tasks/%d/output?type=%s", task.ID, what))
 	if err != nil {
 		return "", err
@@ -123,12 +123,4 @@ func (t Target) getTaskOutput(task Task, what string) (string, error) {
 	}
 
 	return string(b), nil
-}
-
-func (t Target) GetTaskDebugOutput(task Task) (string, error) {
-	return t.getTaskOutput(task, "debug")
-}
-
-func (t Target) GetTaskResult(task Task) (string, error) {
-	return t.getTaskOutput(task, "result")
 }

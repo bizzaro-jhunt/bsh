@@ -85,7 +85,7 @@ func okfail(typ string) Done {
 	}
 }
 
-func follow(t *bosh.Target, id int, done Done) {
+func follow(t *bosh.Target, id int, done Done, bail bool) {
 	fmt.Printf("bosh task @G{%d}\n", id)
 	err := t.Follow(os.Stdout, id)
 	if err != nil {
@@ -101,10 +101,11 @@ func follow(t *bosh.Target, id int, done Done) {
 
 	if task.Succeeded() {
 		fmt.Printf("@G{%s.}\n", done.Good)
-
 	} else {
 		fmt.Printf("@R{%s.}\n", done.Bad)
-		os.Exit(OopsTaskFailed)
+		if bail {
+			os.Exit(OopsTaskFailed)
+		}
 	}
 }
 
@@ -116,7 +117,7 @@ func watch(t *bosh.Target, res *http.Response, done Done) {
 		os.Exit(OopsJSONFailed)
 	}
 
-	follow(t, task.ID, done)
+	follow(t, task.ID, done, true)
 }
 
 func upload(path string) (io.Reader, int64, error) {
