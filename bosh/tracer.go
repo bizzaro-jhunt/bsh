@@ -6,16 +6,17 @@ import (
 	fmt "github.com/jhunt/go-ansi"
 	"io"
 	"strings"
+	"time"
 )
 
 type Event struct {
-	Timestamp int    `json:"timestamp"`
-	Stage     string `json:"stage"`
-	Task      string `json:"task"`
-	Index     int    `json:"index"`
-	Total     int    `json:"total"`
-	State     string `json:"state"`
-	Progress  int    `json:"progress"`
+	Time     int64  `json:"time"`
+	Stage    string `json:"stage"`
+	Task     string `json:"task"`
+	Index    int    `json:"index"`
+	Total    int    `json:"total"`
+	State    string `json:"state"`
+	Progress int    `json:"progress"`
 
 	Type    string            `json:"type"`
 	Message string            `json:"message"`
@@ -30,6 +31,7 @@ type Event struct {
 func TraceEvents(out io.Writer, in io.Reader) error {
 	var last Event
 	n := 0
+	started := make(map[string]time.Time)
 
 	sc := bufio.NewScanner(in)
 	for sc.Scan() {
@@ -46,6 +48,7 @@ func TraceEvents(out io.Writer, in io.Reader) error {
 
 		n++
 		if ev.State == "started" {
+			started[ev.Stage+"/"+ev.Task] = time.Unix(ev.Time, 0)
 			if last.Stage != ev.Stage || last.Task != ev.Task || last.State != ev.State {
 				fmt.Fprintf(out, "\n")
 			}
@@ -53,15 +56,20 @@ func TraceEvents(out io.Writer, in io.Reader) error {
 				strings.ToLower(ev.Stage), ev.Task)
 
 		} else if ev.State == "finished" {
+			dur := lapse(started[ev.Stage+"/"+ev.Task], time.Unix(ev.Time, 0))
+			if dur != "" {
+				dur = fmt.Sprintf(" (@G{%s})", dur)
+			}
+
 			if last.Stage == ev.Stage && last.Task == ev.Task {
-				fmt.Fprintf(out, ". @B{Done} (...)")
+				fmt.Fprintf(out, ". @B{Done}%s", dur)
 				ev.State = "finx"
 			} else {
 				if last.State != ev.State {
 					fmt.Fprintf(out, "\n")
 				}
-				fmt.Fprintf(out, "\n     @B{Done} %s > @G{%s}. (...)",
-					strings.ToLower(ev.Stage), strings.ToLower(ev.Task))
+				fmt.Fprintf(out, "\n     @B{Done} %s > @G{%s}.%s",
+					strings.ToLower(ev.Stage), strings.ToLower(ev.Task), dur)
 			}
 
 		} else if ev.State == "failed" {
