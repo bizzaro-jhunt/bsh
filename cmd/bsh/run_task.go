@@ -20,10 +20,5 @@ func runTask(opt Opt, command string, args []string) {
 		os.Exit(OopsBadOptions)
 	}
 
-	task, err := t.GetTask(int(id))
-	err = t.Follow(os.Stdout, task.ID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
-		os.Exit(OopsTaskFailed)
-	}
+	follow(t, int(id), okfail("task"))
 }

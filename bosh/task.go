@@ -63,8 +63,6 @@ func (t Target) WaitTask(id int, sleep time.Duration) (Task, error) {
 }
 
 func (t Target) Follow(out io.Writer, id int) error {
-	fmt.Fprintf(out, "bosh task %d:\n", id)
-
 	poller := make(chan error)
 	tracer := make(chan error)
 	rd, wr := io.Pipe()

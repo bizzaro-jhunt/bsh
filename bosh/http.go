@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -26,8 +27,8 @@ func (t Target) UA() *http.Client {
 	}
 }
 
-func (t Target) Get(url string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", t.URL+url, nil)
+func (t Target) Get(uri string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", t.URL+uri, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -35,8 +36,8 @@ func (t Target) Get(url string) (*http.Response, error) {
 	return t.UA().Do(req)
 }
 
-func (t Target) GetJSON(url string, v interface{}) error {
-	r, err := t.Get(url)
+func (t Target) GetJSON(uri string, v interface{}) error {
+	r, err := t.Get(uri)
 	if err != nil {
 		return err
 	}
@@ -53,12 +54,34 @@ func (t Target) GetJSON(url string, v interface{}) error {
 	return nil
 }
 
-func (t Target) Post(url string, payload interface{}) (*http.Response, error) {
+func (t Target) Delete(uri string) (*http.Response, error) {
+	req, err := http.NewRequest("DELETE", t.URL+uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+
+	res, err := t.UA().Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 302 {
+		u, err := url.Parse(res.Header.Get("Location"))
+		if err != nil {
+			return nil, err
+		}
+		return t.Get(u.Path) /* bosh never redirs to querystrings... */
+	}
+	return res, err
+}
+
+func (t Target) Post(uri string, payload interface{}) (*http.Response, error) {
 	b, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", t.URL+url, strings.NewReader(string(b)))
+	req, err := http.NewRequest("POST", t.URL+uri, strings.NewReader(string(b)))
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +90,8 @@ func (t Target) Post(url string, payload interface{}) (*http.Response, error) {
 	return t.UA().Do(req)
 }
 
-func (t Target) PostYAML(url string, raw []byte) (*http.Response, error) {
-	req, err := http.NewRequest("POST", t.URL+url, strings.NewReader(string(raw)))
+func (t Target) PostYAML(uri string, raw []byte) (*http.Response, error) {
+	req, err := http.NewRequest("POST", t.URL+uri, strings.NewReader(string(raw)))
 	if err != nil {
 		return nil, err
 	}

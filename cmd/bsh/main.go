@@ -99,6 +99,12 @@ type Opt struct {
 
 	Target struct {
 	} `cli:"target"`
+
+	Delete struct {
+		Release struct {
+			Force bool `cli:"-f, --force"`
+		} `cli:"release"`
+	} `cli:"delete"`
 }
 
 func main() {
@@ -153,6 +159,8 @@ func main() {
 		"task":        runTask,
 		"tasks":       runTasks,
 		"vms":         runVMs,
+
+		"delete release": runDeleteRelease,
 	}
 
 	if fn, ok := known[command]; ok {

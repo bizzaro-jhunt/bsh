@@ -1,8 +1,9 @@
 package bosh
 
 import (
-	"fmt"
 	"strings"
+
+	"github.com/jhunt/bsh/query"
 )
 
 type TasksFilter struct {
@@ -14,30 +15,23 @@ type TasksFilter struct {
 }
 
 func (tf TasksFilter) String() string {
-	l := make([]string, 0)
+	q := query.New()
 	if len(tf.States) != 0 {
-		l = append(l, fmt.Sprintf("state=%s", strings.Join(tf.States, ",")))
+		q.Set("state", strings.Join(tf.States, ","))
 	}
-	if tf.Deployment != "" {
-		l = append(l, fmt.Sprintf("deployment=%s", tf.Deployment))
-	}
-	if tf.ContextID != "" {
-		l = append(l, fmt.Sprintf("context_id=%s", tf.ContextID))
-	}
+	q.Maybe("deployment", tf.Deployment)
+	q.Maybe("context_id", tf.ContextID)
 	if tf.Limit > 0 {
-		l = append(l, fmt.Sprintf("limit=%d", tf.Limit))
+		q.Set("limit", tf.Limit)
 	}
 	if tf.Verbose != 0 {
-		l = append(l, fmt.Sprintf("verbose=%d", tf.Verbose))
+		q.Set("verbose", tf.Verbose)
 	}
 
-	if len(l) != 0 {
-		return "?" + strings.Join(l, "&")
-	}
-	return ""
+	return q.String()
 }
 
 func (t Target) GetTasks(filter TasksFilter) ([]Task, error) {
 	var l []Task
-	return l, t.GetJSON("/tasks" + filter.String(), &l)
+	return l, t.GetJSON("/tasks"+filter.String(), &l)
 }

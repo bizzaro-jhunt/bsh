@@ -3,11 +3,18 @@ package main
 import (
 	"encoding/json"
 	fmt "github.com/jhunt/go-ansi"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/jhunt/bsh/bosh"
 )
+
+type Done struct {
+	Good string
+	Bad  string
+}
 
 func readConfigFrom(path string) bosh.Config {
 	cfg, err := bosh.ReadConfig(path)
@@ -47,4 +54,65 @@ func jsonify(x interface{}) {
 		os.Exit(OopsJSONFailed)
 	}
 	fmt.Printf("%s\n", string(b))
+}
+
+func thingversion(args []string) (string, string, []string, error) {
+	if len(args) < 1 {
+		return "", "", nil, nil
+	}
+
+	if strings.Contains(args[0], "/") {
+		l := strings.SplitN(args[0], "/", 2)
+		return l[0], l[1], args[1:], nil
+	}
+
+	if len(args) >= 2 {
+		if strings.Contains(args[1], "/") {
+			return "", "", nil, fmt.Errorf("no version provided for '%s'", args[0])
+		}
+		return args[0], args[1], args[2:], nil
+	}
+
+	return "", "", nil, fmt.Errorf("no version provided for '%s'", args[0])
+}
+
+func okfail(typ string) Done {
+	return Done{
+		Good: fmt.Sprintf("%s finished successfully", typ),
+		Bad:  fmt.Sprintf("%s failed", typ),
+	}
+}
+
+func follow(t *bosh.Target, id int, done Done) {
+	fmt.Printf("bosh task @G{%d}\n", id)
+	err := t.Follow(os.Stdout, id)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+		os.Exit(OopsJSONFailed)
+	}
+
+	task, err := t.GetTask(id)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+		os.Exit(OopsJSONFailed)
+	}
+
+	if task.Succeeded() {
+		fmt.Printf("@G{%s.}\n", done.Good)
+
+	} else {
+		fmt.Printf("@R{%s.}\n", done.Bad)
+		os.Exit(OopsTaskFailed)
+	}
+}
+
+func watch(t *bosh.Target, res *http.Response, done Done) {
+	var task bosh.Task
+	err := t.InterpretJSON(res, &task)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+		os.Exit(OopsJSONFailed)
+	}
+
+	follow(t, task.ID, done)
 }

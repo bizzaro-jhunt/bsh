@@ -3,6 +3,8 @@ package bosh
 import (
 	fmt "github.com/jhunt/go-ansi"
 	"io"
+
+	"github.com/jhunt/bsh/query"
 )
 
 type ManifestDiff struct {
@@ -10,11 +12,9 @@ type ManifestDiff struct {
 }
 
 func (t Target) Diff(deployment string, manifest []byte, redact bool) ([][]string, error) {
-	qs := "?redact=false"
-	if redact {
-		qs = "?redact=true"
-	}
-	r, err := t.PostYAML(fmt.Sprintf("/deployments/%s/diff%s", deployment, qs), manifest)
+	q := query.New()
+	q.Bool("redact", redact)
+	r, err := t.PostYAML(fmt.Sprintf("/deployments/%s/diff%s", deployment, q), manifest)
 	if err != nil {
 		return nil, err
 	}
