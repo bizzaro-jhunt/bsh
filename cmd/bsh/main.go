@@ -24,7 +24,7 @@ const (
 
 type Opt struct {
 	Help    bool `cli:"-h, --help"`
-	Version bool `cli:"-v, --version"`
+	Version bool `cli:"-v"`
 
 	URL      string `cli:"--director, --url"`
 	Username string `cli:"-u, --username"`
@@ -111,7 +111,14 @@ type Opt struct {
 	} `cli:"delete"`
 
 	Upload struct {
+		Fix          bool   `cli:"--fix"`
+		SkipIfExists bool   `cli:"--skip-if-exists"`
+		SHA1         string `cli:"--sha1"`
+		Name         string `cli:"--name"`
+		Version      string `cli:"--version"`
+
 		Release struct {
+			Rebase bool `cli:"--rebase"`
 		} `cli:"release"`
 
 		Stemcell struct {
