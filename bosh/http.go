@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -32,6 +33,24 @@ func (t Target) Get(url string) (*http.Response, error) {
 	}
 	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
 	return t.UA().Do(req)
+}
+
+func (t Target) GetJSON(url string, v interface{}) error {
+	r, err := t.Get(url)
+	if err != nil {
+		return err
+	}
+
+	if r.StatusCode != 200 {
+		return fmt.Errorf("BOSH API returned %s", r.Status)
+	}
+
+	err = t.InterpretJSON(r, v)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (t Target) Post(url string, payload interface{}) (*http.Response, error) {

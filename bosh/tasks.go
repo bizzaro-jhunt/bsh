@@ -39,18 +39,5 @@ func (tf TasksFilter) String() string {
 
 func (t Target) GetTasks(filter TasksFilter) ([]Task, error) {
 	var l []Task
-
-	r, err := t.Get("/tasks" + filter.String())
-	if err != nil {
-		return l, err
-	}
-
-	if r.StatusCode != 200 {
-		return l, fmt.Errorf("BOSH API returned %s", r.Status)
-	}
-
-	if err = t.InterpretJSON(r, &l); err != nil {
-		return l, err
-	}
-	return l, nil
+	return l, t.GetJSON("/tasks" + filter.String(), &l)
 }
