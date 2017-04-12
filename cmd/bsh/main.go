@@ -83,6 +83,10 @@ type Opt struct {
 	Stemcells struct {
 	} `cli:"stemcells"`
 
+	Errands struct {
+		Deployment string `cli:"-d, --deployment"`
+	} `cli:"errands"`
+
 	Login struct {
 	} `cli:"login"`
 
@@ -178,6 +182,7 @@ func main() {
 		"task":        runTask,
 		"tasks":       runTasks,
 		"vms":         runVMs,
+		"errands":     runErrands,
 
 		"delete release":  runDeleteRelease,
 		"delete stemcell": runDeleteStemcell,
