@@ -3,12 +3,14 @@ package main
 import (
 	"encoding/json"
 	fmt "github.com/jhunt/go-ansi"
+	"io"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/jhunt/bsh/bosh"
+	"github.com/jhunt/bsh/progress"
 )
 
 type Done struct {
@@ -115,4 +117,24 @@ func watch(t *bosh.Target, res *http.Response, done Done) {
 	}
 
 	follow(t, task.ID, done)
+}
+
+func upload(path string) (io.Reader, int64, error) {
+	var out progress.Reader
+
+	file, err := os.Open(path)
+	if err != nil {
+		return &out, -1, err
+	}
+
+	info, err := file.Stat()
+	if err != nil {
+		file.Close()
+		return &out, -1, err
+	}
+
+	out.Reader = file
+	out.Size = int64(info.Size())
+	out.Draw = progress.Console(os.Stdout, 50, 150, "uploading: ", " @G{done!}\n", '█')
+	return &out, out.Size, nil
 }

@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -97,6 +98,17 @@ func (t Target) PostYAML(uri string, raw []byte) (*http.Response, error) {
 	}
 	req.Header.Set("Content-type", "text/yaml")
 	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	return t.UA().Do(req)
+}
+
+func (t Target) PostFile(uri string, file io.Reader, size int64) (res *http.Response, err error) {
+	req, err := http.NewRequest("POST", t.URL+uri, file)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-type", "application/x-compressed")
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	req.ContentLength = size
 	return t.UA().Do(req)
 }
 
