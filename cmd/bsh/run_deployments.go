@@ -27,6 +27,9 @@ func runDeployments(opt Opt, command string, args []string) {
 			n = len(d.Stemcells)
 		}
 
+		if n == 0 {
+			tbl.Row(d.Name, "", "", d.CloudConfig)
+		}
 		for i := 0; i < n; i++ {
 			var rel, stem string
 
