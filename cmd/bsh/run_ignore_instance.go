@@ -44,10 +44,10 @@ func eitherIgnoreItOrDont(ignore bool, deployment string, opt Opt, args []string
 	return nil
 }
 
-func runIgnore(opt Opt, command string, args []string) {
+func runIgnoreInstance(opt Opt, command string, args []string) {
 	eitherIgnoreItOrDont(true, opt.Ignore.Deployment, opt, args)
 }
 
-func runUnignore(opt Opt, command string, args []string) {
+func runUnignoreInstance(opt Opt, command string, args []string) {
 	eitherIgnoreItOrDont(false, opt.Unignore.Deployment, opt, args)
 }

@@ -156,10 +156,14 @@ type Opt struct {
 
 	Ignore struct {
 		Deployment string `cli:"-d, --deployment"`
+
+		Instance struct{} `cli:"instance"`
 	} `cli:"ignore"`
 
 	Unignore struct {
 		Deployment string `cli:"-d, --deployment"`
+
+		Instance struct{} `cli:"instance"`
 	} `cli:"unignore"`
 }
 
@@ -199,25 +203,25 @@ func main() {
 	}
 
 	known := map[string]func(Opt, string, []string){
-		"check":       runCheck,
-		"cleanup":     runCleanup,
-		"curl":        runCurl,
-		"deploy":      runDeploy,
-		"deployments": runDeployments,
-		"diff":        runDiff,
-		"locks":       runLocks,
-		"login":       runLogin,
-		"releases":    runReleases,
-		"status":      runStatus,
-		"stemcells":   runStemcells,
-		"target":      runTarget,
-		"targets":     runTargets,
-		"task":        runTask,
-		"tasks":       runTasks,
-		"vms":         runVMs,
-		"errands":     runErrands,
-		"ignore":      runIgnore,
-		"unignore":    runUnignore,
+		"check":             runCheck,
+		"cleanup":           runCleanup,
+		"curl":              runCurl,
+		"deploy":            runDeploy,
+		"deployments":       runDeployments,
+		"diff":              runDiff,
+		"locks":             runLocks,
+		"login":             runLogin,
+		"releases":          runReleases,
+		"status":            runStatus,
+		"stemcells":         runStemcells,
+		"target":            runTarget,
+		"targets":           runTargets,
+		"task":              runTask,
+		"tasks":             runTasks,
+		"vms":               runVMs,
+		"errands":           runErrands,
+		"ignore instance":   runIgnoreInstance,
+		"unignore instance": runUnignoreInstance,
 
 		"delete release":    runDeleteRelease,
 		"delete stemcell":   runDeleteStemcell,
