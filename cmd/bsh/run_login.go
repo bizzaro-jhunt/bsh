@@ -6,7 +6,8 @@ import (
 )
 
 func runLogin(opt Opt, command string, args []string) {
-	cfg, t := targeting(opt.Config)
+	cfg, t := targeting(opt)
+
 	user := opt.Username
 	if user == "" {
 		user = prompt("Username: ", false)

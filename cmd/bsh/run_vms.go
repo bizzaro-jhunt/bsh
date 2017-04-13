@@ -9,7 +9,7 @@ import (
 )
 
 func runVMs(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
 	var deployments []string
 
 	if len(args) > 0 {

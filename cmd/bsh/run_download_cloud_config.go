@@ -8,7 +8,8 @@ import (
 )
 
 func runDownloadCloudConfig(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	var l []bosh.CloudConfig
 	err := t.GetJSON("/cloud_configs?limit=1", &l)
 	if err != nil {

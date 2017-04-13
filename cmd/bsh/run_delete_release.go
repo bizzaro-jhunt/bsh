@@ -8,7 +8,7 @@ import (
 )
 
 func runDeleteRelease(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
 
 	l := make([][]string, 0)
 	for len(args) > 0 {

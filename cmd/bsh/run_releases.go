@@ -8,7 +8,8 @@ import (
 )
 
 func runReleases(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	releases, err := t.GetReleases()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)

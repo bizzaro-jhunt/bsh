@@ -6,7 +6,8 @@ import (
 )
 
 func runCleanup(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	task, err := t.Cleanup(opt.Cleanup.All)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)

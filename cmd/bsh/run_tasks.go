@@ -9,7 +9,8 @@ import (
 )
 
 func runTasks(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	if !opt.Tasks.All && len(opt.Tasks.States) == 0 {
 		opt.Tasks.States = append(opt.Tasks.States, "running")
 	}

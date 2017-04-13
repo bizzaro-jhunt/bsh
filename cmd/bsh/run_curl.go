@@ -7,7 +7,8 @@ import (
 )
 
 func runCurl(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	if len(args) < 1 {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadConfiguration)

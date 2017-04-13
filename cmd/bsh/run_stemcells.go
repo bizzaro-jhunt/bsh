@@ -8,7 +8,8 @@ import (
 )
 
 func runStemcells(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	stemcells, err := t.GetStemcells()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)

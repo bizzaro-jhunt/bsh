@@ -8,7 +8,8 @@ import (
 )
 
 func runDownloadRuntimeConfig(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	var l []bosh.RuntimeConfig
 	err := t.GetJSON("/runtime_configs?limit=1", &l)
 	if err != nil {

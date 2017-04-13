@@ -8,7 +8,7 @@ import (
 )
 
 func runDeleteDeployment(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
 
 	name := opt.Delete.Deployment.Deployment
 	if name == "" {

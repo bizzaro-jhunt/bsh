@@ -6,7 +6,7 @@ import (
 )
 
 func runCheck(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
 
 	if opt.Check.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")

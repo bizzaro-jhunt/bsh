@@ -29,13 +29,22 @@ func readConfigFrom(path string) bosh.Config {
 	return cfg
 }
 
-func targeting(path string) (bosh.Config, *bosh.Target) {
-	cfg := readConfigFrom(path)
-	t, err := cfg.CurrentTarget()
+func targeting(opt Opt) (bosh.Config, *bosh.Target) {
+	cfg := readConfigFrom(opt.Config)
+
+	var t *bosh.Target
+	var err error
+
+	if opt.BOSHTarget == "" {
+		t, err = cfg.CurrentTarget()
+	} else {
+		t, err = cfg.Target(opt.BOSHTarget)
+	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsBadConfiguration)
 	}
+
 	return cfg, t
 }
 

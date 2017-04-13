@@ -6,7 +6,8 @@ import (
 )
 
 func runStatus(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	info, err := t.GetInfo()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)

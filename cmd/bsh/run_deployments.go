@@ -8,7 +8,8 @@ import (
 )
 
 func runDeployments(opt Opt, command string, args []string) {
-	_, t := targeting(opt.Config)
+	_, t := targeting(opt)
+
 	deployments, err := t.GetDeployments()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)

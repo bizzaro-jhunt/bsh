@@ -44,6 +44,15 @@ func ReadConfig(path string) (Config, error) {
 	return c, nil
 }
 
+func (c Config) Target(name string) (*Target, error) {
+	t, ok := c.Targets[name]
+	if !ok {
+		return nil, fmt.Errorf("BOSH target '%s' is not defined.")
+	}
+
+	return t, nil
+}
+
 func (c Config) CurrentTarget() (*Target, error) {
 	if c.Current == "" {
 		return nil, fmt.Errorf("no BOSH target is currently selected")
