@@ -153,6 +153,14 @@ type Opt struct {
 		RuntimeConfig struct {
 		} `cli:"runtime-config"`
 	} `cli:"download"`
+
+	Ignore struct {
+		Deployment string `cli:"-d, --deployment"`
+	} `cli:"ignore"`
+
+	Unignore struct {
+		Deployment string `cli:"-d, --deployment"`
+	} `cli:"unignore"`
 }
 
 func main() {
@@ -208,6 +216,8 @@ func main() {
 		"tasks":       runTasks,
 		"vms":         runVMs,
 		"errands":     runErrands,
+		"ignore":      runIgnore,
+		"unignore":    runUnignore,
 
 		"delete release":    runDeleteRelease,
 		"delete stemcell":   runDeleteStemcell,

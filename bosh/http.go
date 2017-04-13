@@ -77,6 +77,20 @@ func (t Target) Delete(uri string) (*http.Response, error) {
 	return res, err
 }
 
+func (t Target) Put(uri string, payload interface{}) (*http.Response, error) {
+	b, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("PUT", t.URL+uri, strings.NewReader(string(b)))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-type", "application/json")
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	return t.UA().Do(req)
+}
+
 func (t Target) Post(uri string, payload interface{}) (*http.Response, error) {
 	b, err := json.Marshal(payload)
 	if err != nil {

@@ -52,6 +52,10 @@ func runVMs(opt Opt, command string, args []string) {
 		tbl := table.NewTable("Name", "State", "UUID", "AZ", "Type", "IPs")
 		tbl.Prefix = "   "
 		for _, vm := range vms {
+			n := len(vm.IPs)
+			if n == 0 {
+				tbl.Row(vm.FullName(), vm.JobState, vm.CID, or(vm.AZ, "-"), vm.Type, "")
+			}
 			for i := range vm.IPs {
 				if i == 0 {
 					tbl.Row(vm.FullName(), vm.JobState, vm.CID, or(vm.AZ, "-"), vm.Type, vm.IPs[i])
