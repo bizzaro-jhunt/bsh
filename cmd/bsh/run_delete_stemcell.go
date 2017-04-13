@@ -29,7 +29,7 @@ func runDeleteStemcell(opt Opt, command string, args []string) {
 
 	for _, p := range l {
 		q := query.New()
-		q.Bool("force", opt.Delete.Stemcell.Force)
+		q.Bool("force", opt.Delete.Force)
 
 		fmt.Printf("@R{deleting} stemcell @B{%s}/@M{%s}...\n", p[0], p[1])
 		res, err := t.Delete(fmt.Sprintf("/stemcells/%s/%s%s", p[0], p[1], q))

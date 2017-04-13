@@ -112,13 +112,16 @@ type Opt struct {
 	} `cli:"target"`
 
 	Delete struct {
+		Force   bool `cli:"-f, --force"`
 		Release struct {
-			Force bool `cli:"-f, --force"`
 		} `cli:"release"`
 
 		Stemcell struct {
-			Force bool `cli:"-f, --force"`
 		} `cli:"stemcell"`
+
+		Deployment struct {
+			Deployment string `cli:"-d, --deployment"`
+		} `cli:"deployment"`
 	} `cli:"delete"`
 
 	Upload struct {
@@ -206,8 +209,10 @@ func main() {
 		"vms":         runVMs,
 		"errands":     runErrands,
 
-		"delete release":  runDeleteRelease,
-		"delete stemcell": runDeleteStemcell,
+		"delete release":    runDeleteRelease,
+		"delete stemcell":   runDeleteStemcell,
+		"delete deployment": runDeleteDeployment,
+
 		"upload release":  runUploadRelease,
 		"upload stemcell": runUploadStemcell,
 

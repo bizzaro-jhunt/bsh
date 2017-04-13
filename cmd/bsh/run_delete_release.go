@@ -30,7 +30,7 @@ func runDeleteRelease(opt Opt, command string, args []string) {
 	for _, p := range l {
 		q := query.New()
 		q.Set("version", p[1])
-		q.Bool("force", opt.Delete.Release.Force)
+		q.Bool("force", opt.Delete.Force)
 
 		fmt.Printf("@R{deleting} release @B{%s}/@M{%s}...\n", p[0], p[1])
 		res, err := t.Delete(fmt.Sprintf("/releases/%s%s", p[0], q))
