@@ -62,6 +62,7 @@ type Opt struct {
 	} `cli:"check"`
 
 	Tasks struct {
+		All        bool     `cli:"-a, --all"`
 		States     []string `cli:"-s, --state"`
 		Deployment string   `cli:"-d, --deployment"`
 		ContextID  string   `cli:"-C, --context, --context-id"`

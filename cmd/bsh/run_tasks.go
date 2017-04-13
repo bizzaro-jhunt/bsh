@@ -10,6 +10,9 @@ import (
 
 func runTasks(opt Opt, command string, args []string) {
 	_, t := targeting(opt.Config)
+	if !opt.Tasks.All && len(opt.Tasks.States) == 0 {
+		opt.Tasks.States = append(opt.Tasks.States, "running")
+	}
 	tasks, err := t.GetTasks(bosh.TasksFilter{
 		States:     opt.Tasks.States,
 		Deployment: opt.Tasks.Deployment,
