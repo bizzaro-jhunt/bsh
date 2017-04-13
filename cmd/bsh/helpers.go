@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/jhunt/bsh/bosh"
 	"github.com/jhunt/bsh/progress"
 )
@@ -138,4 +140,55 @@ func upload(path string) (io.Reader, int64, error) {
 	out.Size = int64(info.Size())
 	out.Draw = progress.Console(os.Stdout, 50, 150, "uploading: ", " @G{done!}\n", '█')
 	return &out, out.Size, nil
+}
+
+func deinterface(v interface{}) interface{} {
+	switch v.(type) {
+	case map[interface{}]interface{}:
+		m := v.(map[interface{}]interface{})
+		o := make(map[string]interface{})
+		for k := range m {
+			o[fmt.Sprintf("%v", k)] = deinterface(m[k])
+		}
+		return o
+
+	case []interface{}:
+		l := v.([]interface{})
+		o := make([]interface{}, len(l))
+		for i := range l {
+			o[i] = deinterface(l[i])
+		}
+		return o
+
+	default:
+		return v
+	}
+}
+
+func yamlr(s string) interface{} {
+	var src map[interface{}]interface{}
+	err := yaml.Unmarshal([]byte(s), &src)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+		os.Exit(OopsJSONFailed)
+	}
+
+	return deinterface(src)
+}
+
+func downloadto(out io.Writer, contents, path string, force bool) {
+	if path != "" {
+		flags := os.O_WRONLY | os.O_CREATE | os.O_TRUNC
+		if !force {
+			flags |= os.O_EXCL
+		}
+		f, err := os.OpenFile(path, flags, 0666)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
+			os.Exit(OopsDownloadFailed)
+		}
+		out = f
+	}
+
+	fmt.Fprintf(out, contents)
 }

@@ -20,6 +20,7 @@ const (
 	OopsJSONFailed
 	OopsTaskFailed
 	OopsCancelled
+	OopsDownloadFailed
 )
 
 type Opt struct {
@@ -134,6 +135,21 @@ type Opt struct {
 		Stemcell struct {
 		} `cli:"stemcell"`
 	} `cli:"upload"`
+
+	Download struct {
+		Output     string `cli:"-o, --output"`
+		Force      bool   `cli:"-f, --force"`
+		Deployment string `cli:"-d, --deployment"`
+
+		Manifest struct {
+		} `cli:"manifest"`
+
+		CloudConfig struct {
+		} `cli:"cloud-config"`
+
+		RuntimeConfig struct {
+		} `cli:"runtime-config"`
+	} `cli:"download"`
 }
 
 func main() {
@@ -194,6 +210,10 @@ func main() {
 		"delete stemcell": runDeleteStemcell,
 		"upload release":  runUploadRelease,
 		"upload stemcell": runUploadStemcell,
+
+		"download manifest":       runDownloadManifest,
+		"download cloud-config":   runDownloadCloudConfig,
+		"download runtime-config": runDownloadRuntimeConfig,
 	}
 
 	if fn, ok := known[command]; ok {

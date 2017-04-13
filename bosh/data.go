@@ -30,4 +30,16 @@ type Deployment struct {
 	Releases    []Release  `json:"releases"`
 	Stemcells   []Stemcell `json:"stemcells"`
 	CloudConfig string     `json:"cloud_config"`
+
+	Manifest string `json:"manifest"`
+}
+
+type CloudConfig struct {
+	Properties string `json:"properties"`
+	CreatedAt  string `json:"created_at"`
+}
+
+type RuntimeConfig struct {
+	Properties string `json:"properties"`
+	CreatedAt  string `json:"created_at"`
 }
