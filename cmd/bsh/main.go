@@ -97,6 +97,9 @@ type Opt struct {
 	Login struct {
 	} `cli:"login"`
 
+	Logout struct {
+	} `cli:"logout"`
+
 	Status struct {
 	} `cli:"status"`
 
@@ -254,6 +257,7 @@ func main() {
 		"diff":              runDiff,
 		"locks":             runLocks,
 		"login":             runLogin,
+		"logout":            runLogout,
 		"releases":          runReleases,
 		"status":            runStatus,
 		"stemcells":         runStemcells,
