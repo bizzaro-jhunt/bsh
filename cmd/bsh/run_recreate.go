@@ -11,7 +11,7 @@ import (
 func runRecreate(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	if opt.Recreate.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -41,7 +41,7 @@ func runRecreate(opt Opt, command string, args []string) {
 		q.Set("max_in_flight", fmt.Sprintf("%d", opt.Recreate.MaxInFlight))
 	}
 
-	name := opt.Recreate.Deployment
+	name := opt.Deployment
 	ok := true
 	for _, p := range l {
 		fmt.Printf("recreating @C{%s} @G{%s}/@G{%s}...\n", name, p[0], p[1])

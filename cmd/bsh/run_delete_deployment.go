@@ -10,7 +10,7 @@ import (
 func runDeleteDeployment(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	name := opt.Delete.Deployment.Deployment
+	name := opt.Deployment
 	if name == "" {
 		if len(args) == 1 {
 			name = args[0]

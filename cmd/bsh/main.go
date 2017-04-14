@@ -39,14 +39,14 @@ type Opt struct {
 	AsJSON bool `cli:"--json"`
 	Batch  bool `cli:"-y, --yes"`
 
+	Deployment string `cli:"-d, --deployment"`
+
 	Deploy struct {
-		Deployment string `cli:"-d, --deployment"`
 		Recreate   bool   `cli:"-R, --recreate"`
 		Redact     bool   `cli:"--redact"`
 	} `cli:"deploy"`
 
 	Diff struct {
-		Deployment string `cli:"-d, --deployment"`
 		Redact     bool   `cli:"--redact"`
 	} `cli:"diff"`
 
@@ -58,14 +58,11 @@ type Opt struct {
 		CPI    bool `cli:"--cpi"`
 	} `cli:"task"`
 
-	Check struct {
-		Deployment string `cli:"-d, --deployment"`
-	} `cli:"check"`
+	Check struct {} `cli:"check"`
 
 	Tasks struct {
 		All        bool     `cli:"-a, --all"`
 		States     []string `cli:"-s, --state"`
-		Deployment string   `cli:"-d, --deployment"`
 		ContextID  string   `cli:"-C, --context, --context-id"`
 		Limit      int      `cli:"-l, --limit"`
 	} `cli:"tasks"`
@@ -74,63 +71,38 @@ type Opt struct {
 		All bool `cli:"-a, --all"`
 	} `cli:"cleanup"`
 
-	Curl struct {
-	} `cli:"curl"`
+	Curl struct {} `cli:"curl"`
 
-	Locks struct {
-	} `cli:"locks"`
+	Locks struct {} `cli:"locks"`
 
-	Deployments struct {
-	} `cli:"deployments"`
+	Deployments struct {} `cli:"deployments"`
 
 	Releases struct {
 		Jobs bool `cli:"--jobs"`
 	} `cli:"releases"`
 
-	Stemcells struct {
-	} `cli:"stemcells"`
-
-	Errands struct {
-		Deployment string `cli:"-d, --deployment"`
-	} `cli:"errands"`
-
-	Login struct {
-	} `cli:"login"`
-
-	Logout struct {
-	} `cli:"logout"`
-
-	Status struct {
-	} `cli:"status"`
+	Stemcells struct {} `cli:"stemcells"`
+	Errands struct {} `cli:"errands"`
+	Login struct {} `cli:"login"`
+	Logout struct {} `cli:"logout"`
+	Status struct {} `cli:"status"`
 
 	VMs struct {
 		Vitals     bool   `cli:"--vitals"`
 		Details    bool   `cli:"--details"`
 		Processes  bool   `cli:"--ps"`
 		DNS        bool   `cli:"--dns"`
-		Deployment string `cli:"-d, --deployment"`
 	} `cli:"vms, instances"`
 
-	Targets struct {
-	} `cli:"targets"`
-
-	Target struct {
-	} `cli:"target"`
+	Targets struct {} `cli:"targets"`
+	Target struct {} `cli:"target"`
 
 	Delete struct {
 		Force   bool `cli:"-f, --force"`
-		Release struct {
-		} `cli:"release"`
-
-		Stemcell struct {
-		} `cli:"stemcell"`
-
-		Deployment struct {
-			Deployment string `cli:"-d, --deployment"`
-		} `cli:"deployment"`
-
-		VM struct {
-		} `cli:"vm"`
+		Release struct {} `cli:"release"`
+		Stemcell struct {} `cli:"stemcell"`
+		Deployment struct {} `cli:"deployment"`
+		VM struct {} `cli:"vm"`
 	} `cli:"delete"`
 
 	Upload struct {
@@ -144,14 +116,12 @@ type Opt struct {
 			Rebase bool `cli:"--rebase"`
 		} `cli:"release"`
 
-		Stemcell struct {
-		} `cli:"stemcell"`
+		Stemcell struct {} `cli:"stemcell"`
 	} `cli:"upload"`
 
 	Download struct {
 		Output     string `cli:"-o, --output"`
 		Force      bool   `cli:"-f, --force"`
-		Deployment string `cli:"-d, --deployment"`
 
 		Manifest struct {
 		} `cli:"manifest"`
@@ -164,14 +134,10 @@ type Opt struct {
 	} `cli:"download"`
 
 	Ignore struct {
-		Deployment string `cli:"-d, --deployment"`
-
 		Instance struct{} `cli:"instance"`
 	} `cli:"ignore"`
 
 	Unignore struct {
-		Deployment string `cli:"-d, --deployment"`
-
 		Instance struct{} `cli:"instance"`
 	} `cli:"unignore"`
 
@@ -189,7 +155,6 @@ type Opt struct {
 		MaxInFlight int    `cli:"--max-in-flight"`
 		Canaries    int    `cli:"--canaries"`
 		SkipDrain   bool   `cli:"--ski-drain"`
-		Deployment  string `cli:"-d, --deployment"`
 	} `cli:"start"`
 
 	Stop struct {
@@ -200,7 +165,6 @@ type Opt struct {
 		MaxInFlight int    `cli:"--max-in-flight"`
 		Canaries    int    `cli:"--canaries"`
 		SkipDrain   bool   `cli:"--ski-drain"`
-		Deployment  string `cli:"-d, --deployment"`
 	} `cli:"stop"`
 
 	Restart struct {
@@ -209,7 +173,6 @@ type Opt struct {
 		MaxInFlight int    `cli:"--max-in-flight"`
 		Canaries    int    `cli:"--canaries"`
 		SkipDrain   bool   `cli:"--ski-drain"`
-		Deployment  string `cli:"-d, --deployment"`
 	} `cli:"restart"`
 
 	Recreate struct {
@@ -219,7 +182,6 @@ type Opt struct {
 		MaxInFlight int    `cli:"--max-in-flight"`
 		Canaries    int    `cli:"--canaries"`
 		SkipDrain   bool   `cli:"--ski-drain"`
-		Deployment  string `cli:"-d, --deployment"`
 	} `cli:"recreate"`
 }
 

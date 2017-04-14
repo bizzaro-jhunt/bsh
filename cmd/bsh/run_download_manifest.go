@@ -8,7 +8,7 @@ import (
 func runDownloadManifest(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	name := opt.Download.Deployment
+	name := opt.Deployment
 	if name == "" {
 		if len(args) == 1 {
 			name = args[0]

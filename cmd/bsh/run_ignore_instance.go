@@ -45,9 +45,9 @@ func eitherIgnoreItOrDont(ignore bool, deployment string, opt Opt, args []string
 }
 
 func runIgnoreInstance(opt Opt, command string, args []string) {
-	eitherIgnoreItOrDont(true, opt.Ignore.Deployment, opt, args)
+	eitherIgnoreItOrDont(true, opt.Deployment, opt, args)
 }
 
 func runUnignoreInstance(opt Opt, command string, args []string) {
-	eitherIgnoreItOrDont(false, opt.Unignore.Deployment, opt, args)
+	eitherIgnoreItOrDont(false, opt.Deployment, opt, args)
 }

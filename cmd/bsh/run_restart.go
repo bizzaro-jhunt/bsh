@@ -11,7 +11,7 @@ import (
 func runRestart(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	if opt.Restart.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -40,7 +40,7 @@ func runRestart(opt Opt, command string, args []string) {
 		q.Set("max_in_flight", fmt.Sprintf("%d", opt.Restart.MaxInFlight))
 	}
 
-	name := opt.Restart.Deployment
+	name := opt.Deployment
 	ok := true
 	for _, p := range l {
 		fmt.Printf("restarting @C{%s} @G{%s}/@G{%s}...\n", name, p[0], p[1])

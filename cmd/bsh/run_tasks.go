@@ -16,7 +16,7 @@ func runTasks(opt Opt, command string, args []string) {
 	}
 	tasks, err := t.GetTasks(bosh.TasksFilter{
 		States:     opt.Tasks.States,
-		Deployment: opt.Tasks.Deployment,
+		Deployment: opt.Deployment,
 		ContextID:  opt.Tasks.ContextID,
 		Limit:      opt.Tasks.Limit,
 		Verbose:    2,

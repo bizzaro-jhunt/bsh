@@ -16,7 +16,7 @@ func runStart(opt Opt, command string, args []string) {
 		os.Exit(OopsBadOptions)
 	}
 
-	if opt.Start.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -46,7 +46,7 @@ func runStart(opt Opt, command string, args []string) {
 		q.Set("max_in_flight", fmt.Sprintf("%d", opt.Start.MaxInFlight))
 	}
 
-	name := opt.Start.Deployment
+	name := opt.Deployment
 	ok := true
 	for _, p := range l {
 		fmt.Printf("starting @C{%s} @G{%s}/@G{%s}...\n", name, p[0], p[1])

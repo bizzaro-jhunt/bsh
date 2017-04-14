@@ -10,12 +10,12 @@ import (
 func runErrands(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	if opt.Errands.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
 
-	errands, err := t.GetErrandsFor(opt.Errands.Deployment)
+	errands, err := t.GetErrandsFor(opt.Deployment)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsCommunicationFailed)

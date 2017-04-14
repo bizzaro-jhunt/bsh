@@ -15,7 +15,7 @@ func runDiff(opt Opt, command string, args []string) {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
-	if opt.Diff.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -26,7 +26,7 @@ func runDiff(opt Opt, command string, args []string) {
 		os.Exit(OopsCommunicationFailed)
 	}
 
-	diff, err := t.Diff(opt.Diff.Deployment, manifest, opt.Diff.Redact)
+	diff, err := t.Diff(opt.Deployment, manifest, opt.Diff.Redact)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsCommunicationFailed)

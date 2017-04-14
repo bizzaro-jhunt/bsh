@@ -8,12 +8,12 @@ import (
 func runCheck(opt Opt, command string, args []string) {
 	_, t := targeting(opt)
 
-	if opt.Check.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
 
-	r, err := t.Post(fmt.Sprintf("/deployments/%s/scans", opt.Check.Deployment), nil)
+	r, err := t.Post(fmt.Sprintf("/deployments/%s/scans", opt.Deployment), nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsCommunicationFailed)

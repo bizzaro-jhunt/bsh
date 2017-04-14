@@ -14,8 +14,8 @@ func runVMs(opt Opt, command string, args []string) {
 
 	if len(args) > 0 {
 		deployments = append(deployments, args...)
-	} else if opt.VMs.Deployment != "" {
-		deployments = append(deployments, opt.VMs.Deployment)
+	} else if opt.Deployment != "" {
+		deployments = append(deployments, opt.Deployment)
 	}
 	if len(deployments) == 0 {
 		deploys, err := t.GetDeployments()

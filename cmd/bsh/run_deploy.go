@@ -16,7 +16,7 @@ func runDeploy(opt Opt, command string, args []string) {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
-	if opt.Deploy.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -27,7 +27,7 @@ func runDeploy(opt Opt, command string, args []string) {
 		os.Exit(OopsCommunicationFailed)
 	}
 
-	diff, err := t.Diff(opt.Deploy.Deployment, manifest, opt.Deploy.Redact)
+	diff, err := t.Diff(opt.Deployment, manifest, opt.Deploy.Redact)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "@R{!!! %s}\n", err)
 		os.Exit(OopsCommunicationFailed)
@@ -35,7 +35,7 @@ func runDeploy(opt Opt, command string, args []string) {
 
 	bosh.FormatDiff(os.Stdout, diff)
 	fmt.Printf("\n")
-	fmt.Printf("@M{%s} > @B{%s}\n", t.Name, opt.Deploy.Deployment)
+	fmt.Printf("@M{%s} > @B{%s}\n", t.Name, opt.Deployment)
 	if !confirm(fmt.Sprintf("Deploy these changes? [@G{yes}/@R{no}] ")) {
 		fmt.Printf("@R{aborting...}\n")
 		os.Exit(OopsCancelled)

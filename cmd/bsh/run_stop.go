@@ -16,7 +16,7 @@ func runStop(opt Opt, command string, args []string) {
 		os.Exit(OopsBadOptions)
 	}
 
-	if opt.Stop.Deployment == "" {
+	if opt.Deployment == "" {
 		fmt.Fprintf(os.Stderr, "@R{!!! usage...}\n")
 		os.Exit(OopsBadOptions)
 	}
@@ -49,7 +49,7 @@ func runStop(opt Opt, command string, args []string) {
 		q.Set("max_in_flight", fmt.Sprintf("%d", opt.Stop.MaxInFlight))
 	}
 
-	name := opt.Stop.Deployment
+	name := opt.Deployment
 	ok := true
 	for _, p := range l {
 		if opt.Stop.Hard {
