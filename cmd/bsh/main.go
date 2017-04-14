@@ -125,6 +125,9 @@ type Opt struct {
 		Deployment struct {
 			Deployment string `cli:"-d, --deployment"`
 		} `cli:"deployment"`
+
+		VM struct {
+		} `cli:"vm"`
 	} `cli:"delete"`
 
 	Upload struct {
@@ -266,6 +269,7 @@ func main() {
 		"delete release":    runDeleteRelease,
 		"delete stemcell":   runDeleteStemcell,
 		"delete deployment": runDeleteDeployment,
+		"delete vm":         runDeleteVM,
 
 		"inspect release": runInspectRelease,
 
