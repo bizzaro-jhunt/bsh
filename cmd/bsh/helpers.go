@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -200,4 +201,60 @@ func downloadto(out io.Writer, contents, path string, force bool) {
 	}
 
 	fmt.Fprintf(out, contents)
+}
+
+func kbsize(kb string) string {
+	k, err := strconv.ParseFloat(kb, 32)
+	if err != nil {
+		return kb
+	}
+
+	if k == 0 {
+		return "   0 "
+	}
+
+	unit := "K"
+	if k > 1024 {
+		k /= 1024.0
+		unit = "M"
+
+		if k > 1024 {
+			k /= 1024.0
+			unit = "G"
+
+			if k > 1024 {
+				k /= 1024.0
+				unit = "T"
+			}
+		}
+	}
+
+	return fmt.Sprintf("% 4d%s", int(k), unit)
+}
+
+func percent(s string) string {
+	return fmt.Sprintf("%s%%", s)
+}
+
+func clocked(t uint64) string {
+	var d, h, m, s uint64
+
+	s = t % 60
+	t /= 60
+
+	m = t % 60
+	t /= 60
+
+	h = t % 24
+	t /= 24
+
+	d = t
+
+	if d > 0 {
+		return fmt.Sprintf("%dd %d:%02dm", d, h, m)
+	}
+	if h > 0 || m > 0 {
+		return fmt.Sprintf("%d:%02dm", h, m)
+	}
+	return fmt.Sprintf("%d:%02ds", m, s)
 }

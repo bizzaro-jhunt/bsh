@@ -101,9 +101,12 @@ type Opt struct {
 	} `cli:"status"`
 
 	VMs struct {
-		Vitals     bool   `cli:"-V, --vitals"`
+		Vitals     bool   `cli:"--vitals"`
+		Details    bool   `cli:"--details"`
+		Processes  bool   `cli:"--ps"`
+		DNS        bool   `cli:"--dns"`
 		Deployment string `cli:"-d, --deployment"`
-	} `cli:"vms"`
+	} `cli:"vms, instances"`
 
 	Targets struct {
 	} `cli:"targets"`

@@ -27,7 +27,7 @@ func NewTable(headers ...string) Table {
 	}
 }
 
-func (t *Table) Row(data ...interface{}) {
+func (t *Table) row(data ...interface{}) {
 	row := make([]string, len(data))
 	for i := range data {
 		row[i] = fmt.Sprintf("%v", data[i])
@@ -37,6 +37,55 @@ func (t *Table) Row(data ...interface{}) {
 	}
 
 	t.Rows = append(t.Rows, row)
+}
+
+func (t *Table) Row(raw ...interface{}) {
+	h := 1
+
+	for i, v := range raw {
+		if l, ok := v.([]interface{}); ok {
+			if len(l) > h {
+				h = len(l)
+			}
+		} else if l, ok := v.([]string); ok {
+			if len(l) > h {
+				h = len(l)
+			}
+		} else {
+			raw[i] = []interface{}{v}
+		}
+	}
+
+	data := make([][]interface{}, h)
+	for y := 0; y < h; y++ {
+		data[y] = make([]interface{}, len(raw))
+		for x := range raw {
+			data[y][x] = ""
+		}
+	}
+	for x, v := range raw {
+		if l, ok := v.([]interface{}); ok {
+			for y, w := range l {
+				data[y][x] = fmt.Sprintf("%v", w)
+			}
+		} else if l, ok := v.([]string); ok {
+			for y, w := range l {
+				data[y][x] = fmt.Sprintf("%v", w)
+			}
+		}
+	}
+
+	for _, row := range data {
+		t.row(row...)
+	}
+}
+
+func (t *Table) Spacer() {
+	filler := make([]interface{}, len(t.Headers))
+	for i := range filler {
+		filler[i] = ""
+	}
+	t.row(filler...)
 }
 
 func (t Table) Print(out io.Writer) {
