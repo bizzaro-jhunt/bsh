@@ -165,6 +165,43 @@ type Opt struct {
 
 		Instance struct{} `cli:"instance"`
 	} `cli:"unignore"`
+
+	Inspect struct {
+		Release struct {
+		} `cli:"release"`
+	} `cli:"inspect"`
+
+	Start struct {
+		Soft        bool   `cli:"--soft"`
+		Hard        bool   `cli:"--hard"`
+		Force       bool   `cli:"--force"`
+		Fix         bool   `cli:"--fix"`
+		DryRun      bool   `cli:"--dry-run"`
+		MaxInFlight int    `cli:"--max-in-flight"`
+		Canaries    int    `cli:"--canaries"`
+		SkipDrain   bool   `cli:"--ski-drain"`
+		Deployment  string `cli:"-d, --deployment"`
+	} `cli:"start"`
+
+	Stop struct {
+		Soft        bool   `cli:"--soft"`
+		Hard        bool   `cli:"--hard"`
+		Force       bool   `cli:"--force"`
+		DryRun      bool   `cli:"--dry-run"`
+		MaxInFlight int    `cli:"--max-in-flight"`
+		Canaries    int    `cli:"--canaries"`
+		SkipDrain   bool   `cli:"--ski-drain"`
+		Deployment  string `cli:"-d, --deployment"`
+	} `cli:"stop"`
+
+	Restart struct {
+		Force       bool   `cli:"--force"`
+		DryRun      bool   `cli:"--dry-run"`
+		MaxInFlight int    `cli:"--max-in-flight"`
+		Canaries    int    `cli:"--canaries"`
+		SkipDrain   bool   `cli:"--ski-drain"`
+		Deployment  string `cli:"-d, --deployment"`
+	} `cli:"restart"`
 }
 
 func main() {
@@ -227,12 +264,18 @@ func main() {
 		"delete stemcell":   runDeleteStemcell,
 		"delete deployment": runDeleteDeployment,
 
+		"inspect release": runInspectRelease,
+
 		"upload release":  runUploadRelease,
 		"upload stemcell": runUploadStemcell,
 
 		"download manifest":       runDownloadManifest,
 		"download cloud-config":   runDownloadCloudConfig,
 		"download runtime-config": runDownloadRuntimeConfig,
+
+		"start":   runStart,
+		"stop":    runStop,
+		"restart": runRestart,
 	}
 
 	if fn, ok := known[command]; ok {

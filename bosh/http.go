@@ -91,6 +91,16 @@ func (t Target) Put(uri string, payload interface{}) (*http.Response, error) {
 	return t.UA().Do(req)
 }
 
+func (t Target) PutYAMLish(uri string) (*http.Response, error) {
+	req, err := http.NewRequest("PUT", t.URL+uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-type", "text/yaml")
+	req.Header.Set("Authorization", "Basic "+basicAuth(t.Username, t.Password))
+	return t.UA().Do(req)
+}
+
 func (t Target) Post(uri string, payload interface{}) (*http.Response, error) {
 	b, err := json.Marshal(payload)
 	if err != nil {
