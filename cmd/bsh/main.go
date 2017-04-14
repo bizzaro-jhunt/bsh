@@ -211,6 +211,16 @@ type Opt struct {
 		SkipDrain   bool   `cli:"--ski-drain"`
 		Deployment  string `cli:"-d, --deployment"`
 	} `cli:"restart"`
+
+	Recreate struct {
+		Force       bool   `cli:"--force"`
+		Fix         bool   `cli:"--fix"`
+		DryRun      bool   `cli:"--dry-run"`
+		MaxInFlight int    `cli:"--max-in-flight"`
+		Canaries    int    `cli:"--canaries"`
+		SkipDrain   bool   `cli:"--ski-drain"`
+		Deployment  string `cli:"-d, --deployment"`
+	} `cli:"recreate"`
 }
 
 func main() {
@@ -284,9 +294,10 @@ func main() {
 		"download cloud-config":   runDownloadCloudConfig,
 		"download runtime-config": runDownloadRuntimeConfig,
 
-		"start":   runStart,
-		"stop":    runStop,
-		"restart": runRestart,
+		"start":    runStart,
+		"stop":     runStop,
+		"restart":  runRestart,
+		"recreate": runRecreate,
 	}
 
 	if fn, ok := known[command]; ok {
